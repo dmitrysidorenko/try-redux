@@ -1,7 +1,7 @@
-import app from '../../app.js';
+import {component} from '../../app.js';
 
-app.component('content', {
+component('content', {
     controller: ($scope)=> {
-        
+
     }
 });

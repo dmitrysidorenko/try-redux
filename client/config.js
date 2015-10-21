@@ -1,1 +1,1 @@
-export var defaultComponentStubUrl = '/core/defaultComponentStub.html';
+export var defaultComponentStubUrl = '/core/default-component-stub.html';

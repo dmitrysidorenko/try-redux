@@ -8,8 +8,9 @@ app.config(($stateProvider, $urlRouterProvider, $locationProvider)=> {
     $urlRouterProvider.when('', '/').otherwise(() => '/');
 
     $stateProvider.state('app', {
-        url: '/root',
-        templateUrl: './main/index.html',
-        controller: 'main'
+        url: '/',
+        templateUrl: './dashboard/index.html',
+        controller: 'dashboardCtrl',
+        controllerAs: 'dashboard'
     });
 });

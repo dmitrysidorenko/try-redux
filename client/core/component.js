@@ -12,8 +12,9 @@ let toCamelCase = (str) => str.split(/-/).reduce((str, strPart, index)=> {
 export default (extendedModule)=> {
     // Alternatively, shortcut to accessing the componentProvider via extendedModule.component
     extendedModule.component = (name, {
+        pathPrefix = '',
         stubUrl = defaultComponentStubUrl,
-        templateUrl = 'components/' + name + '/index.html',
+        templateUrl = pathPrefix + 'components/' + name + '/index.html',
         controller = ()=> undefined,
         controllerAs = null,
         params = {},

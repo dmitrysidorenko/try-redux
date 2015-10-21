@@ -1,6 +1,6 @@
-import app from '../../app.js';
+import {component} from '../../app.js';
 
-app.component('main-menu', {
+component('main-menu', {
     controller: ($scope, params)=> {
         $scope.items = params;
     }
