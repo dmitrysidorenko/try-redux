@@ -1,0 +1,8 @@
+<h1>Dashboard</h1>
+
+<button ng-click="dashboard.addNewWidget()">
+    Add
+</button>
+
+<dashboard-widget ng-repeat="w in dashboard.widgets"
+                  params="{name: w.name, component: w.component, params: w.params, widgetId: w.id}"></dashboard-widget>

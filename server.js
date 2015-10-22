@@ -11,10 +11,10 @@ var compiler = webpack(config);
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
 app.use(webpackHotMiddleware(compiler));
 
-app.use(express.static('./client'));
+app.use(express.static('./client/app'));
 
 app.use(function(req, res) {
-  res.sendFile(__dirname + '/client/index.html');
+  res.sendFile(__dirname + '/client/app/index.html');
 });
 
 app.listen(port, function(error) {

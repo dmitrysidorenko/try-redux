@@ -9,13 +9,13 @@ let toCamelCase = (str) => str.split(/-/).reduce((str, strPart, index)=> {
     return str;
 }, '');
 
-export default (extendedModule)=> {
+function extendComponent(extendedModule) {
     // Alternatively, shortcut to accessing the componentProvider via extendedModule.component
     extendedModule.component = (name, {
         pathPrefix = '',
         stubUrl = defaultComponentStubUrl,
         templateUrl = pathPrefix + 'components/' + name + '/index.html',
-        controller = ()=> undefined,
+        controller = angular.noop,
         controllerAs = null,
         params = {},
         restrict = 'E'
@@ -72,8 +72,31 @@ export default (extendedModule)=> {
                             }
                             $element.data('$ngControllerController', controllerInstance);
                             $element.children().data('$ngControllerController', controllerInstance);
+
+                            if (controllerInstance && typeof controllerInstance.onComponentWillMounted === 'function') {
+                                controllerInstance.onComponentWillMounted();
+                            }
+
                             link(scope);
 
+                            if (controllerInstance && typeof controllerInstance.onComponentDidMounted === 'function') {
+                                controllerInstance.onComponentDidMounted();
+                            }
+
+                            scope.$on('$destroy', ()=> {
+                                if (controllerInstance && typeof controllerInstance.onComponentWillUnmounted === 'function') {
+                                    controllerInstance.onComponentWillUnmounted();
+                                }
+                            });
+
+                            scope.$watch('params', (newParams, oldParams)=> {
+                                if (angular.equals(newParams, oldParams)) {
+                                    return;
+                                }
+                                if (controllerInstance && typeof controllerInstance.onParamsChanged === 'function') {
+                                    controllerInstance.onParamsChanged(newParams);
+                                }
+                            });
                         }, error => {
                             console.error('Template for component "' + name + '" not found by URL ' + templateUrl);
                         });
@@ -94,4 +117,8 @@ export default (extendedModule)=> {
 
         return extendedModule;
     };
-};
+
+    return extendedModule;
+}
+
+export {extendComponent};

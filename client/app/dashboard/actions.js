@@ -7,9 +7,9 @@ export var addWidget = (widget)=> {
     }
 };
 
-export var removeWidget = (widget)=> {
+export var removeWidget = (widgetId)=> {
     return {
         type: ActionTypes.REMOVE_WIDGET,
-        widget
+        widgetId
     }
 };

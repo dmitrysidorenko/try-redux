@@ -5,7 +5,7 @@ export default createReducer([], {
     [ActionTypes.ADD_WIDGET](state, {widget}) {
         return [...state, widget];
     },
-    [ActionTypes.REMOVE_WIDGET](state, {widget}) {
-        return state.filter(w => w !== widget);
+    [ActionTypes.REMOVE_WIDGET](state, {widgetId}) {
+        return state.filter(w => w.id !== widgetId);
     }
 })
