@@ -1,7 +1,14 @@
 import {component} from '../../app.js';
 
-component('menu-item', {
-    controller: ($scope, params)=> {
+class Controller{
+    constructor($scope, params){
         $scope.item = params;
     }
-});
+
+    onParamsChanged(newItems){
+        debugger;
+    }
+}
+
+component('menu-item', {
+    controller: Controller});

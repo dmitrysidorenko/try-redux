@@ -10,6 +10,10 @@ class DashboardWidgetController {
     remove() {
         this.widgets.removeWidget(this.widgetId);
     }
+
+    onParamsChanged(newParams) {
+        debugger
+    }
 }
 
 export {DashboardWidgetController}

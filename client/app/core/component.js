@@ -17,7 +17,7 @@ function extendComponent(extendedModule) {
         templateUrl = pathPrefix + 'components/' + name + '/index.html',
         controller = angular.noop,
         controllerAs = null,
-        params = {},
+        params = null,
         restrict = 'E'
         } = {}) => {
 
@@ -48,7 +48,7 @@ function extendComponent(extendedModule) {
 
                     return (scope, $element)=> {
                         let needStub = true;
-                        let scopeParams = Object.assign({}, scope.params, params);
+                        let scopeParams = angular.copy(scope.params);
 
                         $element.addClass(name);
 

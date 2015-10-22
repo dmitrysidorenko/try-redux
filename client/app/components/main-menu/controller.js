@@ -4,7 +4,7 @@ class MainMenuController {
     }
 
     onParamsChanged(newParams) {
-        console.log('Params has changed!', params, newParams);
+        console.log('Params has changed!', this.items, newParams);
         this.items = newParams;
     }
 }
