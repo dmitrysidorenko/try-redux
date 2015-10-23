@@ -8,6 +8,6 @@ import dashboardWidgetComponent from './components/dashboard-widget/index.js';
 addReducer('widgets', reducer);
 
 export default extendComponent(angular.module('dashboard', []))
-    .controller('dashboardCtrl', ['$ngRedux', '$scope', '$timeout', DashboardController])
+    .controller('dashboardCtrl', DashboardController)
     .service('dashboard.widgets', ['$ngRedux', WidgetsService])
     .component('dashboard-widget', dashboardWidgetComponent);

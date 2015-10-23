@@ -37,4 +37,6 @@ class DashboardController {
     }
 }
 
+DashboardController.$inject = ['$ngRedux', '$scope', '$timeout'];
+
 export {DashboardController}

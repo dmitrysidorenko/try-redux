@@ -1,8 +1,8 @@
-import {component} from '../../app.js';
 import {MainMenuController} from './controller.js';
 require('./index.less');
 
-component('main-menu', {
+export default {
+    pathPrefix: 'main/',
     controller: ['params', MainMenuController],
     controllerAs: 'mainMenu'
-});
+}

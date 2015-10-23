@@ -1,0 +1,20 @@
+<div class="main">
+    <ul class="main__menu">
+        <li class="main__menu__item"
+            ui-sref-active="active">
+            <a class="main__menu__item__link"
+               ui-sref="app.cabinet">Cabinet</a>
+        </li>
+        <li class="main__menu__item"
+            ui-sref-active="active">
+            <a class="main__menu__item__link"
+               ui-sref="app.articles">Articles</a>
+        </li>
+        <span class="main__menu__loading" ng-show="main.isLoading">Loading...</span>
+    </ul>
+    <div>
+        <button ng-click="main.addLoader()">+ loader</button>
+        <button ng-click="main.removeLoader()">- loader</button>
+    </div>
+    <ui-view></ui-view>
+</div>
