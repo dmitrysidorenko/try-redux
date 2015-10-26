@@ -1,3 +1,4 @@
 <ul class="articles__list">
-    <article ng-repeat="a in articlesList.list" params="a"></article>
+    <input type="text" ng-model="articlesList.articleTitle"/>
+    <article ng-repeat="a in articlesList.list" params="a" article-title="{{articlesList.articleTitle}}"></article>
 </ul>

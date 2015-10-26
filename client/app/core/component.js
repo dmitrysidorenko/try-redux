@@ -13,23 +13,29 @@ function extendComponent(extendedModule) {
     // Alternatively, shortcut to accessing the componentProvider via extendedModule.component
     extendedModule.component = (name, {
         pathPrefix = '',
-        stubUrl = defaultComponentStubUrl,
         templateUrl = pathPrefix + 'components/' + name + '/index.html',
         controller = angular.noop,
         controllerAs = null,
         params = null,
-        restrict = 'E'
+        restrict = 'E',
+        scope = {
+            params: '='
+        },
+        stubTemplate = `<div>Component "${name}" is loading...</div>`,
+        stubTemplateUrl = undefined,
         } = {}) => {
 
         let directiveName = toCamelCase(name);
 
         components[name] = {
             name,
-            stubUrl,
+            stubTemplate,
+            stubTemplateUrl,
             templateUrl,
             controller,
             controllerAs,
-            params
+            params,
+            scope
         };
 
         if (!name) {
@@ -38,37 +44,39 @@ function extendComponent(extendedModule) {
 
         // Create a new directive
         extendedModule.directive(directiveName, ($http, $q, $compile, $controller, $injector) => {
+            let stubTemplateKind = stubTemplateUrl ? 'templateUrl' : 'template';
+            let stub = stubTemplateUrl || stubTemplate;
             return {
                 restrict: restrict,
-                scope: {
-                    params: '='
-                },
+                scope: scope,
+                [stubTemplateKind]: stub,
                 compile: (tElement, tAttrs, $transclude) => {
                     var templateCache = $injector.get('$templateCache');
 
-                    return (scope, $element)=> {
+                    return ($scope, $element, $attrs)=> {
                         let needStub = true;
-                        let scopeParams = angular.copy(scope.params);
+                        let scopeParams = angular.copy($scope.params);
 
                         $element.addClass(name);
-
-                        $http.get(stubUrl, {
-                            cache: templateCache
-                        }).then(renderStubIfNeeded, errorStub);
 
                         $http.get(templateUrl, {
                             cache: templateCache
                         }).then(response => {
                             needStub = false;
+                            let componentParams = Object.keys(scope).reduce((store, key) => {
+                                store[key] = $scope[key];
+                                return store;
+                            }, {});
 
                             $element.html(response.data);
                             var link = $compile($element.contents());
                             var controllerInstance = $controller(controller, {
-                                $scope: scope,
-                                params: scopeParams
+                                $scope: $scope,
+                                params: scopeParams,
+                                componentParams: componentParams
                             });
                             if (controllerAs) {
-                                scope[controllerAs] = controllerInstance;
+                                $scope[controllerAs] = controllerInstance;
                             }
                             $element.data('$ngControllerController', controllerInstance);
                             $element.children().data('$ngControllerController', controllerInstance);
@@ -77,19 +85,46 @@ function extendComponent(extendedModule) {
                                 controllerInstance.onComponentWillMounted();
                             }
 
-                            link(scope);
+                            link($scope);
 
                             if (controllerInstance && typeof controllerInstance.onComponentDidMounted === 'function') {
                                 controllerInstance.onComponentDidMounted();
                             }
 
-                            scope.$on('$destroy', ()=> {
+                            $scope.$on('$destroy', ()=> {
                                 if (controllerInstance && typeof controllerInstance.onComponentWillUnmounted === 'function') {
                                     controllerInstance.onComponentWillUnmounted();
                                 }
                             });
 
-                            scope.$watch('params', (newParams, oldParams)=> {
+
+                            Object.keys(scope).forEach(key => {
+                                let val = scope[key];
+                                let attrType = val.charAt(0);
+                                switch (attrType) {
+                                    case '=':
+                                        $scope.$watch(key, (newValue, oldValue)=> {
+                                            if(angular.equals(newValue, oldValue)){
+                                                return;
+                                            }
+                                            if (controllerInstance && typeof controllerInstance.onParamChanged === 'function') {
+                                                controllerInstance.onParamChanged(key, newValue, oldValue);
+                                            }
+                                        });
+                                        break;
+                                    case '@':
+                                        $attrs.$observe(key, (newValue, oldValue)=> {
+                                            if(angular.equals(newValue, oldValue)){
+                                                return;
+                                            }
+                                            if (controllerInstance && typeof controllerInstance.onParamChanged === 'function') {
+                                                controllerInstance.onParamChanged(key, newValue, oldValue);
+                                            }
+                                        })
+                                }
+                            });
+
+                            $scope.$watch('params', (newParams, oldParams)=> {
                                 if (angular.equals(newParams, oldParams)) {
                                     return;
                                 }
