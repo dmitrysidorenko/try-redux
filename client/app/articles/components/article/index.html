@@ -1,4 +1,4 @@
 <h2>
-    <a ui-sref="app.read({id:article.article.id})">{{article.articleTitle}}</a>
+    <a ng-click="article.onArticleSelected($event)" ui-srefd="app.read({id:article.article.id})">{{article.title}}</a>
 </h2>
 <div>{{article.article.text}}</div>

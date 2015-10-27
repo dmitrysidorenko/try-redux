@@ -15,6 +15,10 @@ class ReadController {
         };
     }
 
+    onWordSelected(word) {
+        console.log('selected word', word);
+    }
+
 }
 
 ReadController.$inject = ['$ngRedux', '$scope', '$state'];

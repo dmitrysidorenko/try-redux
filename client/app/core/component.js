@@ -1,12 +1,23 @@
 import {defaultComponentStubUrl} from '../config.js';
+require('./component.less');
 
 let components = {};
-let toCamelCase = (str) => str.split(/-/).reduce((str, strPart, index)=> {
+let toCamelCase = str => str.split(/-/).reduce((str, strPart, index)=> {
     if (!index) {
         return str += strPart;
     }
     str += strPart.charAt(0).toUpperCase() + strPart.substr(1);
     return str;
+}, '');
+
+let fromCamelCase = str => str.split(/([A-Z])/).reduce((str, strPart, index)=> {
+    if(!index){
+        return str + strPart;
+    }
+    if(part.toUpperCase() === strPart){
+        return str + '-' + strPart.toLowerCase()
+    }
+    return str + strPart;
 }, '');
 
 function extendComponent(extendedModule) {
@@ -16,12 +27,16 @@ function extendComponent(extendedModule) {
         templateUrl = pathPrefix + 'components/' + name + '/index.html',
         controller = angular.noop,
         controllerAs = null,
-        params = null,
         restrict = 'E',
-        scope = {
-            params: '='
-        },
-        stubTemplate = `<div>Component "${name}" is loading...</div>`,
+        scope = {},
+        stubTemplate = `
+            <div class="spinner">
+              <div class="rect1"></div>
+              <div class="rect2"></div>
+              <div class="rect3"></div>
+              <div class="rect4"></div>
+              <div class="rect5"></div>
+            </div>`,
         stubTemplateUrl = undefined,
         } = {}) => {
 
@@ -34,7 +49,6 @@ function extendComponent(extendedModule) {
             templateUrl,
             controller,
             controllerAs,
-            params,
             scope
         };
 
@@ -54,15 +68,11 @@ function extendComponent(extendedModule) {
                     var templateCache = $injector.get('$templateCache');
 
                     return ($scope, $element, $attrs)=> {
-                        let needStub = true;
-                        let scopeParams = angular.copy($scope.params);
-
                         $element.addClass(name);
 
                         $http.get(templateUrl, {
                             cache: templateCache
                         }).then(response => {
-                            needStub = false;
                             let componentParams = Object.keys(scope).reduce((store, key) => {
                                 store[key] = $scope[key];
                                 return store;
@@ -72,8 +82,7 @@ function extendComponent(extendedModule) {
                             var link = $compile($element.contents());
                             var controllerInstance = $controller(controller, {
                                 $scope: $scope,
-                                params: scopeParams,
-                                componentParams: componentParams
+                                params: componentParams
                             });
                             if (controllerAs) {
                                 $scope[controllerAs] = controllerInstance;
@@ -97,54 +106,36 @@ function extendComponent(extendedModule) {
                                 }
                             });
 
-
-                            Object.keys(scope).forEach(key => {
+                            let unwatchers = Object.keys(scope).map(key => {
                                 let val = scope[key];
                                 let attrType = val.charAt(0);
                                 switch (attrType) {
                                     case '=':
-                                        $scope.$watch(key, (newValue, oldValue)=> {
-                                            if(angular.equals(newValue, oldValue)){
+                                    case '&':
+                                        return $scope.$watch(key, (newValue, oldValue)=> {
+                                            if (angular.equals(newValue, oldValue)) {
                                                 return;
                                             }
                                             if (controllerInstance && typeof controllerInstance.onParamChanged === 'function') {
                                                 controllerInstance.onParamChanged(key, newValue, oldValue);
                                             }
                                         });
-                                        break;
                                     case '@':
-                                        $attrs.$observe(key, (newValue, oldValue)=> {
-                                            if(angular.equals(newValue, oldValue)){
+                                        return $attrs.$observe(key, (newValue, oldValue)=> {
+                                            if (angular.equals(newValue, oldValue)) {
                                                 return;
                                             }
                                             if (controllerInstance && typeof controllerInstance.onParamChanged === 'function') {
                                                 controllerInstance.onParamChanged(key, newValue, oldValue);
                                             }
-                                        })
-                                }
-                            });
-
-                            $scope.$watch('params', (newParams, oldParams)=> {
-                                if (angular.equals(newParams, oldParams)) {
-                                    return;
-                                }
-                                if (controllerInstance && typeof controllerInstance.onParamsChanged === 'function') {
-                                    controllerInstance.onParamsChanged(newParams);
+                                        });
+                                    default:
+                                        return ()=>undefined
                                 }
                             });
                         }, error => {
                             console.error('Template for component "' + name + '" not found by URL ' + templateUrl);
                         });
-
-                        function renderStubIfNeeded(response) {
-                            if (needStub) {
-                                $element.html(response.data);
-                            }
-                        }
-
-                        function errorStub(error) {
-
-                        }
                     };
                 }
             };
@@ -156,4 +147,4 @@ function extendComponent(extendedModule) {
     return extendedModule;
 }
 
-export {extendComponent};
+export {extendComponent, components, toCamelCase, fromCamelCase};

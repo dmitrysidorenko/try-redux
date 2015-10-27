@@ -8,13 +8,6 @@ class ArticleReaderComponentController {
         this.onWordSelected = onWordSelected;
     }
 
-    onParamsChanged({article, onWordSelected=()=> {
-    }}) {
-        this.article = article;
-        this.onWordSelected = onWordSelected;
-        this.selectedWordsSet = new WeakSet();
-    }
-
     onWordClicked(word) {
         var wasSelected = this.selectedWordsSet.has(word);
         this.selectedWordsSet.delete(this.selectedWord);
@@ -24,7 +17,9 @@ class ArticleReaderComponentController {
             this.selectedWordsSet.add(word);
             this.selectedWord = word;
         }
-        this.onWordSelected(this.selectedWord);
+        this.onWordSelected({
+            word: this.selectedWord
+        });
     }
 
     static splitArticleByWords(article) {

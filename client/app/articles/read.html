@@ -1,1 +1,4 @@
-<article-reader ng-if="read.article" params="{article: read.article}"></article-reader>
+<div class="page" spinner="!read.article && !error">
+    <article-reader ng-if="read.article" article="read.article"
+                    on-word-selected="read.onWordSelected(word)"></article-reader>
+</div>

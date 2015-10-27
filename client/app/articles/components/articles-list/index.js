@@ -3,5 +3,9 @@ import {ArticlesListComponentController} from './controller.js';
 export default {
     pathPrefix: 'articles/',
     controller: ['params', ArticlesListComponentController],
-    controllerAs: 'articlesList'
+    controllerAs: 'articlesList',
+    scope: {
+        list: '=',
+        onSelect: '&'
+    }
 }

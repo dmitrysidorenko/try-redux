@@ -5,7 +5,8 @@ export default {
     controller: ArticleComponentController,
     controllerAs: 'article',
     scope: {
-        params: '=',
-        articleTitle: '@'
+        article: '=',
+        title: '@',
+        onSelect: '&'
     }
 }

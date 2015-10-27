@@ -52,7 +52,7 @@ export let loadArticles = (filters = [])=> {
         return new Promise((resolve, reject)=> {
             setTimeout(()=> {
                 resolve([...articles])
-            }, 2000);
+            }, 500);
         }).then(articles => {
                 dispatch(MainActions.removeLoader());
                 dispatch(success(articles))

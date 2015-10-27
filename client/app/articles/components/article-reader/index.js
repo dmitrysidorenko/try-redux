@@ -4,5 +4,9 @@ require('./index.less');
 export default {
     pathPrefix: 'articles/',
     controller: ['params', ArticleReaderComponentController],
-    controllerAs: 'articleReader'
+    controllerAs: 'articleReader',
+    scope: {
+        article: '=',
+        onWordSelected: '&'
+    }
 }

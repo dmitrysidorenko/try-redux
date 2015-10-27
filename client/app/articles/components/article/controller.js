@@ -1,24 +1,35 @@
 class ArticleComponentController {
-    constructor(article, componentParams) {
+    constructor({article, title, onSelect}) {
         this.article = article;
-        this.articleTitle = componentParams.articleTitle
+        this.title = title;
+        this.onSelect = onSelect;
     }
 
-    onParamsChanged(article) {
-        this.article = article;
-    }
-
-    onParamChanged(paramName, newValue, oldValue){
-        switch(paramName){
-            case 'articleTitle':
-                this.articleTitle = newValue;
+    onParamChanged(paramName, newValue, oldValue) {
+        switch (paramName) {
+            case 'article':
+                this.article = newValue;
+                break;
+            case 'title':
+                this.title = newValue;
+                break;
+            case 'onSelect':
+                this.onSelect = newValue;
+                break;
         }
+    }
+
+    onArticleSelected($event) {
+        $event.preventDefault();
+
+        this.onSelect({
+            article: this.article
+        });
     }
 }
 
 ArticleComponentController.$inject = [
-    'params',
-    'componentParams'
+    'params'
 ];
 
 export {ArticleComponentController}

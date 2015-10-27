@@ -3,6 +3,8 @@
 <div class="article-reader__words">
     <span class="article-reader__word" ng-repeat="w in articleReader.words"
           ng-click="articleReader.onWordClicked(w)"
-            ng-class="{selected: articleReader.selectedWordsSet.has(w)}">{{w.text}}<span>&nbsp;</span>
+          ng-class="{
+            selected: articleReader.selectedWordsSet.has(w)
+          }">{{w.text}}<span>&nbsp;</span>
     </span>
 </div>

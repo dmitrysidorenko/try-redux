@@ -6,6 +6,7 @@ import reducer from './reducer.js';
 import articlesListComponent from './components/articles-list/index.js';
 import articleComponent from './components/article/index.js';
 import articleReaderComponent from './components/article-reader/index.js';
+require('./articles.less');
 
 addReducer('articles', reducer);
 
